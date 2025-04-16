@@ -6,7 +6,6 @@
   :dependencies [[org.clojure/clojure "1.12.0"]
                  [com.cognitect.aws/api "0.8.735"]
                  [com.cognitect.aws/endpoints "871.2.30.22"]
-                 [com.cognitect.aws/s3 "871.2.30.22"]
                  [com.cognitect.aws/ecs "871.2.30.22"]]
   :repl-options {:init-ns ecsctl.core}
   :main ecsctl.core

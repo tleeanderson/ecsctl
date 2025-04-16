@@ -3,10 +3,7 @@
   (:require [clojure.set :as cset])
   (:require [cognitect.aws.client.api :as aws]))
 
-(def s3 (aws/client {:api :s3}))
-
-(defn test-func []
-  (aws/ops aws/client))
+(def ecs (aws/client {:api :ecs}))
 
 ;;ecsctl list tasks
 ;;ecsctl tasks list
