@@ -1,26 +1,28 @@
 (ns ecsctl.core
   ;;(:require [arc-solver2.image-utils :as iu])
   (:require [clojure.set :as cset])
+  (:require [clojure.string])
   (:require [cognitect.aws.client.api :as aws]))
 
-(def ecs (aws/client {:api :ecs}))
+(def ecs-client (aws/client {:api :ecs}))
 
-;;ecsctl list tasks
-;;ecsctl tasks list
+(def ecs-ops (aws/ops ecs-client))
 
-(def verb-to-noun {:list #{"tasks"}})
+(defn keyword-from-args [cli-args]
+  (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
 
-(defn valid-command? [verb noun]
-  )
-
-(defn va-test [args verbs nouns]
-  (cond
-    (not= (first args) "ecsctl") false
-    (nil? (verbs (second args))) false
-    (nil? (nouns (nth args 2))) false
-    :else true))
+(defn valid-command?
+  ([cli-args]
+   (valid-command? cli-args ecs-ops))
+  ([cli-args ops]
+   (valid-command? cli-args ops (keyword-from-args cli-args)))
+  ([cli-args ops user-op]
+   (if (contains? ops user-op)
+     (println cli-args "is a valid command")
+     (println "error: " cli-args " is not a valid command"))))
 
 (defn -main
-  [x & args]
-  (println (map #(type %) (flatten [x args])))
-  (println "type of args: " (type args) " len args: " (count args)))
+  [fa & args]
+  (if (= fa "ecsctl")
+    (valid-command? args)
+    (println "error: " fa " is not a valid command")))
