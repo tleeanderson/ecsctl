@@ -5,24 +5,34 @@
   (:require [cognitect.aws.client.api :as aws]))
 
 (def ecs-client (aws/client {:api :ecs}))
-
 (def ecs-ops (aws/ops ecs-client))
+(def prog-name "ecsctl")
+(def usage (str prog-name " [verb] [noun]"))
 
 (defn keyword-from-args [cli-args]
   (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
 
-(defn valid-command?
+(defn valid-args?
   ([cli-args]
-   (valid-command? cli-args ecs-ops))
+   (valid-args? cli-args ecs-ops))
   ([cli-args ops]
-   (valid-command? cli-args ops (keyword-from-args cli-args)))
-  ([cli-args ops user-op]
-   (if (contains? ops user-op)
-     (println cli-args "is a valid command")
-     (println "error: " cli-args " is not a valid command"))))
+   (contains? ops (keyword-from-args cli-args))))
+
+(defn valid-command? [cli-args]
+  (cond
+    ;TODO might not need this check
+    (not= (first cli-args) prog-name) (do
+                                        (println "error: command must start with" prog-name)
+                                        (println usage)
+                                        false)
+    (false? (valid-args? (rest cli-args))) (do
+                                             (if (empty? (rest cli-args))
+                                               (println "error: no arguments provided" )
+                                               (println "error:" (clojure.string/join " " (rest cli-args))
+                                                        "are not valid arguments"))
+                                             (println usage))
+    :else (println cli-args "is a valid command")))
 
 (defn -main
   [fa & args]
-  (if (= fa "ecsctl")
-    (valid-command? args)
-    (println "error: " fa " is not a valid command")))
+  (valid-command? (apply list fa args)))
