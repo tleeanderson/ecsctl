@@ -30,8 +30,10 @@
                                                (println "error: no arguments provided" )
                                                (println "error:" (clojure.string/join " " (rest cli-args))
                                                         "are not valid arguments"))
-                                             (println usage))
-    :else (println cli-args "is a valid command")))
+                                             (println usage)
+                                             false)
+    :else (do (println cli-args "is a valid command")
+              true)))
 
 (defn -main
   [fa & args]
