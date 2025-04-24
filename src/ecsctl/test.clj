@@ -2,8 +2,6 @@
   (:require [cognitect.aws.client.test-double :as test]
            [cognitect.aws.client.api :as aws]))
 
-(def ecs-client (aws/client {:api :ecs}))
-
 (def literal-test-client (test/client {:api :ecs :ops {:ListTasks
                                                        {:response ["literal-example-some-arn"]}}}))
 

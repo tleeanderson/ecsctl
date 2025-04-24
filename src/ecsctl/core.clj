@@ -1,8 +1,9 @@
 (ns ecsctl.core
-  ;;(:require [arc-solver2.image-utils :as iu])
-  (:require [clojure.set :as cset])
   (:require [clojure.string])
   (:require [cognitect.aws.client.api :as aws]))
+
+;examples
+;(aws/invoke s3 {:op :ListBuckets})
 
 (def ecs-client (aws/client {:api :ecs}))
 (def ecs-ops (aws/ops ecs-client))
@@ -41,4 +42,7 @@
 
 (defn -main
   [fa & args]
-  (valid-command (apply list fa args)))
+  (let [cmd (valid-command gi)]
+  (when (some? cmd)
+    ;TODO need error output/handling here of some sort
+    (aws/invoke ecs-client {:op cmd}))))
