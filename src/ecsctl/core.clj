@@ -40,9 +40,13 @@
       :else (do (println cli-args "is a valid command")
                 args))))
 
+(defn run-cmd [args]
+  (let [cmd (valid-command args)]
+    (when (some? cmd)
+      ;TODO need error output/handling here of some sort
+      (aws/invoke ecs-client {:op cmd}))))
+
 (defn -main
+  ;type ArraySeq
   [fa & args]
-  (let [cmd (valid-command gi)]
-  (when (some? cmd)
-    ;TODO need error output/handling here of some sort
-    (aws/invoke ecs-client {:op cmd}))))
+  (run-cmd (apply list fa args)))
