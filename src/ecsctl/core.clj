@@ -40,11 +40,17 @@
       :else (do (println cli-args "is a valid command")
                 args))))
 
+(defn handle-invoke [invoke-ret]
+  (if (= (invoke-ret :cognitect.anomalies/category) :cognitect.anomalies/fault)
+    (do
+      (println "error message: " (invoke-ret :cognitect.anomalies/message) "\n"
+               (invoke-ret :cognitect.aws.util/throwable)))
+    invoke-ret))
+
 (defn run-cmd [args]
   (let [cmd (valid-command args)]
     (when (some? cmd)
-      ;TODO need error output/handling here of some sort
-      (aws/invoke ecs-client {:op cmd}))))
+      (handle-invoke (aws/invoke ecs-client {:op cmd})))))
 
 (defn -main
   ;type ArraySeq
