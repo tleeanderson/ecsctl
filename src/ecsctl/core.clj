@@ -1,4 +1,5 @@
 (ns ecsctl.core
+  (:gen-class)
   (:require [clojure.string])
   (:require [cognitect.aws.client.api :as aws]))
 
@@ -45,7 +46,7 @@
     (do
       (println "error message: " (invoke-ret :cognitect.anomalies/message) "\n"
                (invoke-ret :cognitect.aws.util/throwable)))
-    invoke-ret))
+    (println invoke-ret)))
 
 (defn run-cmd [args]
   (let [cmd (valid-command args)]

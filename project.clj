@@ -9,6 +9,6 @@
                  [com.cognitect.aws/ecs "871.2.30.22"]]
   :repl-options {:init-ns ecsctl.core}
   :main ecsctl.core
-  ;:skip-aot ecsctl.core:target-path "target/%s"
-  ;:profiles {:uberjar {:aot :all}}
-  )
+  ;:skip-aot ecsctl.core
+  :target-path "target/%s"
+  :profiles {:uberjar {:aot :all}})
