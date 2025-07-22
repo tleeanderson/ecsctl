@@ -14,6 +14,13 @@
 ;example inputs
 (def gi ["ecsctl" "list" "tasks"])
 
+(defn cli-arg-parts [cli-cmd]
+  (let [[cmd args] ((fn [[a & args] res]
+                      (if (.startsWith a "--")
+                        [res (cons a args)]
+                        (recur args (conj res a)))) (rest cli-cmd) [])]
+    {:base (first cli-cmd) :cmd cmd :args args}))
+
 (defn keyword-from-args [cli-args]
   (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
 
