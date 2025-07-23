@@ -24,6 +24,9 @@
 (defn keyword-from-args [cli-args]
   (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
 
+(defn keyword-from-long-arg [long-arg]
+  (keyword (apply str (-> long-arg rest rest))))
+
 (defn valid-keyword
   ([cli-args]
    (valid-keyword cli-args ecs-ops))
