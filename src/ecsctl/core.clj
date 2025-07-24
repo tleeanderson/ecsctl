@@ -21,6 +21,8 @@
                         (recur args (conj res a)))) (rest cli-cmd) [])]
     {:base (first cli-cmd) :cmd cmd :args args}))
 
+
+
 (defn keyword-from-args [cli-args]
   (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
 
@@ -34,6 +36,13 @@
    (let [kw (keyword-from-args args)]
      (when (contains? ops kw)
        kw))))
+
+;TODO first validate, and perhaps return keywords if successful, nil otherwise? or an exception?
+;(defn validate-parts [{base :base cmd :cmd args :args} ops]
+;  (and (= base "ecsctl")
+;       (contains? ops (keyword-from-args cmd))
+;       ;TODO validate args here by, perhaps, odds being --something and evens being some value
+;       (map #() (parts :args))))
 
 (defn valid-command [cli-args]
   (let [args (valid-keyword cli-args)]
