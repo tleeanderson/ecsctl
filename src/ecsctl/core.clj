@@ -37,12 +37,29 @@
      (when (contains? ops kw)
        kw))))
 
-;TODO first validate, and perhaps return keywords if successful, nil otherwise? or an exception?
+;we need only to do some initial checking on the arg, ie starts
+; with --, and then turn it into a keyword. Let the lookup into ecs-ops,
+; ops, whatever fail if the user gave us junk.
+(defn keyword-from-long-arg [arg-name]
+  (let [arg (subs arg-name 2)]
+    (when (and (re-matches #"[a-z]" (str (first arg)))
+               (re-matches #"[a-z-]+" arg))
+      (keyword arg))))
+
 ;(defn validate-parts [{base :base cmd :cmd args :args} ops]
 ;  (and (= base "ecsctl")
 ;       (contains? ops (keyword-from-args cmd))
-;       ;TODO validate args here by, perhaps, odds being --something and evens being some value
 ;       (map #() (parts :args))))
+;
+;(defn validate-cmd-args [{args :args}]
+;  ;"--arg-1   value1   --arg-2 value2"
+;  (let [cmd-args (filterv #(not (str/blank? %))
+;                         (str/split (apply str args) #" "))]
+;    (if (even? (count cmd-args))
+;
+;      nil))
+;  )
+
 
 (defn valid-command [cli-args]
   (let [args (valid-keyword cli-args)]
