@@ -21,13 +21,10 @@
                         (recur args (conj res a)))) (rest cli-cmd) [])]
     {:base (first cli-cmd) :cmd cmd :args args}))
 
-
-
 (defn keyword-from-args [cli-args]
-  (keyword (clojure.string/join (mapv clojure.string/capitalize cli-args))))
-
-(defn keyword-from-long-arg [long-arg]
-  (keyword (apply str (-> long-arg rest rest))))
+  (keyword (clojure.string/join (cons (first cli-args)
+                                      (mapv clojure.string/capitalize
+                                            (rest cli-args))))))
 
 (defn valid-keyword
   ([cli-args]
@@ -41,10 +38,11 @@
 ; with --, and then turn it into a keyword. Let the lookup into ecs-ops,
 ; ops, whatever fail if the user gave us junk.
 (defn keyword-from-long-arg [arg-name]
-  (let [arg (subs arg-name 2)]
+  (let [arg (subs arg-name 2)
+        arg-words (str/split arg #"-")]
     (when (and (re-matches #"[a-z]" (str (first arg)))
                (re-matches #"[a-z-]+" arg))
-      (keyword arg))))
+      (keyword-from-args arg-words))))
 
 ;(defn validate-parts [{base :base cmd :cmd args :args} ops]
 ;  (and (= base "ecsctl")
