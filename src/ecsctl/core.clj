@@ -39,7 +39,7 @@
 ; ops, whatever fail if the user gave us junk.
 (defn keyword-from-long-arg [arg-name]
   (let [arg (subs arg-name 2)
-        arg-words (str/split arg #"-")]
+        arg-words (clojure.string/split arg #"-")]
     (when (and (re-matches #"[a-z]" (str (first arg)))
                (re-matches #"[a-z-]+" arg))
       (keyword-from-args arg-words))))
