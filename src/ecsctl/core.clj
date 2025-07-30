@@ -21,10 +21,10 @@
                         (recur args (conj res a)))) (rest cli-cmd) [])]
     {:base (first cli-cmd) :cmd cmd :args args}))
 
-(defn keyword-from-args [cli-args]
-  (keyword (clojure.string/join (cons (first cli-args)
+(defn keyword-from-args [args]
+  (keyword (clojure.string/join (cons (first args)
                                       (mapv clojure.string/capitalize
-                                            (rest cli-args))))))
+                                            (rest args))))))
 
 (defn valid-keyword
   ([cli-args]
@@ -34,9 +34,6 @@
      (when (contains? ops kw)
        kw))))
 
-;we need only to do some initial checking on the arg, ie starts
-; with --, and then turn it into a keyword. Let the lookup into ecs-ops,
-; ops, whatever fail if the user gave us junk.
 (defn keyword-from-long-arg [arg-name]
   (let [arg (subs arg-name 2)
         arg-words (clojure.string/split arg #"-")]
@@ -44,10 +41,23 @@
                (re-matches #"[a-z-]+" arg))
       (keyword-from-args arg-words))))
 
-;(defn validate-parts [{base :base cmd :cmd args :args} ops]
-;  (and (= base "ecsctl")
-;       (contains? ops (keyword-from-args cmd))
-;       (map #() (parts :args))))
+;TODO need to account for cmd with no args
+(defn validate-parts [{base :base cmd :cmd args :args} ops]
+  (let [cmd-kw (keyword-from-args cmd)
+        arg-kw (keyword-from-long-arg args)]
+    (cond
+      (not= base "ecsctl") (do
+                             (println "base is not ecsctl")
+                             (System/exit 1))
+      (not (contains? ops cmd-kw)) (do
+                                     (println cmd-kw "is not a valid ecs command")
+                                     (System/exit 1))
+      (or (nil? ((ops cmd-kw) :required))
+        (nil? ((set ((ops cmd-kw) :required)) arg-kw))) (do
+                                                       (println cmd-kw arg-kw "is not a valid ecs command")
+                                                       (System/exit 1))
+      :else (do
+              (println cmd-kw arg-kw "is valid")))))
 ;
 ;(defn validate-cmd-args [{args :args}]
 ;  ;"--arg-1   value1   --arg-2 value2"
