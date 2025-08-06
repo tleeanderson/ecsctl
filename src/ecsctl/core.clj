@@ -41,7 +41,6 @@
                (re-matches #"[a-z-]+" arg))
       (keyword-from-args arg-words))))
 
-;TODO need to account for cmd with no args
 (defn validate-parts [{base :base cmd :cmd args :args} ops]
   (let [cmd-kw (keyword-from-args cmd)
         arg-kw (keyword-from-long-arg args)]
@@ -58,7 +57,7 @@
                                                        (System/exit 1))
       :else (do
               (println cmd-kw arg-kw "is valid")))))
-;
+
 ;(defn validate-cmd-args [{args :args}]
 ;  ;"--arg-1   value1   --arg-2 value2"
 ;  (let [cmd-args (filterv #(not (str/blank? %))
